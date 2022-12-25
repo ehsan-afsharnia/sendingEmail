@@ -1,37 +1,125 @@
 // variables
 
-const sendBtn = document.querySelector('#sendBtn')
-
-
-
-
-
-
+const sendBtn = document.querySelector("#sendBtn"),
+    email = document.querySelector("#email"),
+    subject = document.querySelector("#subject"),
+    message = document.querySelector("#message"),
+    resetBtn = document.querySelector("#resetBtn"),
+    form = document.querySelector("#email-form");
 
 // eventlisteners
 
-eventlisteners()
+eventlisteners();
 
+function eventlisteners() {
+    // app initialization
 
+    document.addEventListener("DOMContentLoaded", appInit);
 
-function eventlisteners(){
+    // validating fields
+    email.addEventListener("blur", validateField);
+    subject.addEventListener("blur", validateField);
+    message.addEventListener("blur", validateField);
 
-// app initialization
+    // reset btn
 
-document.addEventListener('DOMContentLoaded', appInit)
+    resetBtn.addEventListener("click", resetForm);
 
-    
+    // submit form and show gif
+
+    form.addEventListener("submit", submitForm);
 }
 
+// functions
 
+function appInit() {
+    // Disabled send button on load
 
+    sendBtn.disabled = true;
+}
 
+// sending email and submit the form
 
-// functions 
+function submitForm(e) {
+    e.preventDefault();
 
-function appInit(){
+    // show the spinner
 
+    const spinner = document.getElementById("spinner");
+    spinner.style.display = "block";
 
-sendBtn.disabled = true
+    // make second gif
 
+    const sendEmailImg = document.createElement("img");
+
+    sendEmailImg.src = "img/mail.gif";
+    sendEmailImg.style.display = "block";
+
+    // show the email send image
+
+    setTimeout(function () {
+        // hide first spinner
+
+        spinner.style.display = "none";
+
+        // append image ti the HTML
+
+        const loaders = document.querySelector("#loaders");
+        loaders.appendChild(sendEmailImg);
+
+        setTimeout(() => {
+            resetForm();
+            sendEmailImg.remove();
+        }, 5000);
+    }, 3000);
+}
+
+function validateField() {
+    validateLength(this);
+
+    // validate email field
+
+    if (this.type == "email") {
+        validateEmail(this);
+    }
+
+    let error = document.querySelectorAll(".error");
+
+    if (email.value != "" && subject.value != "" && message.value != "") {
+        if (error.length === 0) {
+            sendBtn.disabled = false;
+        }
+    }
+}
+
+// validate length of fields
+
+function validateLength(field) {
+    if (field.value.length > 0) {
+        field.style.borderBottomColor = "green";
+        field.classList.remove("error");
+    } else {
+        field.style.borderBottomColor = "red";
+        field.classList.add("error");
+    }
+}
+
+// reset form with button
+
+// validate email field contains @
+
+function validateEmail(field) {
+    const emailText = field.value;
+
+    if (emailText.includes("@")) {
+        field.style.borderBottomColor = "green";
+        field.classList.remove("error");
+    } else {
+        field.style.borderBottomColor = "red";
+        field.classList.add("error");
+    }
+}
+
+function resetForm() {
+    form.reset();
 }
